@@ -1,6 +1,7 @@
 import Player from '../objects/Player';
 import Phaser from 'phaser';
 import Game from '../objects/Game';
+import Debugger from '../objects/Debugger';
 
 class GameState extends Phaser.State {
 
@@ -10,21 +11,19 @@ class GameState extends Phaser.State {
     }
 
     create() {
-        console.log('Entered game state!');
-
         const gridSize = {
-                width: 10,
-                height: 10
-            };
+            width: 50,
+            height: 50
+        };
 
         this._player = new Player(this.game, gridSize);
 
         this._cursors = this.game.input.keyboard.createCursorKeys();
+
+        this._debugger = new Debugger(this.game, this._player.children[0]);
     }
 
     update() {
-        console.log('Update function');
-
         if (this._cursors.left.isDown) {
             this._player.setDirection(Game.directions.LEFT);
         } else if (this._cursors.right.isDown) {
@@ -36,6 +35,10 @@ class GameState extends Phaser.State {
         }
 
         this._player.move();
+    }
+
+    render() {
+        this._debugger.render();
     }
 
 }

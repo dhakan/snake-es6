@@ -22,8 +22,6 @@ class Player extends Phaser.Group {
     }
 
     move() {
-        console.log('move');
-
         if (this._direction === Game.directions.LEFT) {
             this.x += -Game.PLAYER_MOVEMENT_SPEED;
         } else if (this._direction === Game.directions.RIGHT) {
