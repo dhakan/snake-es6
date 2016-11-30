@@ -1,3 +1,3 @@
-import Game from 'src/objects/Game';
+import Game from 'src/components/objects/Game';
 
 new Game();
