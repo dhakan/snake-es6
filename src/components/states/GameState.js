@@ -8,6 +8,7 @@ class GameState extends Phaser.State {
     preload() {
         this.game.load.image('square', 'images/square.png');
         this.game.load.image('fruit', 'images/fruit.png');
+        this.game.load.image('snake', 'images/snake.png');
     }
 
     create() {

@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import BodyPart from './BodyPart';
 import Game from './Game';
 
 class Player extends Phaser.Group {
@@ -9,12 +8,16 @@ class Player extends Phaser.Group {
 
         this._gridSize = gridSize;
         this._direction = 'right';
+
         this.expandBody();
+
+        this.setAll('body.collideWorldBounds', true);
     }
 
     expandBody() {
-        const bodyPart = new BodyPart(this.game, this._gridSize.width, this._gridSize.height);
-        this.add(bodyPart);
+        const bodyPart = this.create(this._gridSize.width, this._gridSize.height, 'snake');
+        bodyPart.width = this._gridSize.width;
+        bodyPart.height = this._gridSize.height;
     }
 
     setDirection(newDirection) {
@@ -22,14 +25,18 @@ class Player extends Phaser.Group {
     }
 
     move() {
-        if (this._direction === Game.directions.LEFT) {
-            this.x += -Game.PLAYER_MOVEMENT_SPEED;
-        } else if (this._direction === Game.directions.RIGHT) {
-            this.x += Game.PLAYER_MOVEMENT_SPEED;
-        } else if (this._direction === Game.directions.UP) {
-            this.y += -Game.PLAYER_MOVEMENT_SPEED;
-        } else {
-            this.y += Game.PLAYER_MOVEMENT_SPEED;
+        for (let bodyPart of this.children) {
+            bodyPart.body.velocity.set(0, 0);
+
+            if (this._direction === Game.directions.LEFT) {
+                bodyPart.body.velocity.x = -Game.PLAYER_VELOCITY;
+            } else if (this._direction === Game.directions.RIGHT) {
+                bodyPart.body.velocity.x = Game.PLAYER_VELOCITY;
+            } else if (this._direction === Game.directions.UP) {
+                bodyPart.body.velocity.y = -Game.PLAYER_VELOCITY;
+            } else {
+                bodyPart.body.velocity.y = Game.PLAYER_VELOCITY;
+            }
         }
     }
 }

@@ -21,8 +21,8 @@ class Debugger {
 
     render() {
         if (this._showDebug) {
-            this._game.debug.bodyInfo(this._sprite);
-            this._game.debug.body(this._sprite);
+            this._game.debug.bodyInfo(this._sprite, 20, 20);
+            this._game.debug.body(this._sprite, 20, 20);
         }
     }
 }

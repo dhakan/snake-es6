@@ -15,7 +15,7 @@ class Game extends Phaser.Game {
     }
 }
 
-Game.PLAYER_MOVEMENT_SPEED = 1;
+Game.PLAYER_VELOCITY = 200;
 Game.directions = {
     UP: 'up',
     DOWN: 'down',
