@@ -1,3 +1,3 @@
-import Game from 'objects/Game';
+import Game from 'src/objects/Game';
 
 new Game();
