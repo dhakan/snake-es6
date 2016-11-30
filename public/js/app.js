@@ -459,7 +459,7 @@ var BootState = function (_Phaser$State) {
             //Initial GameSystem (Arcade, P2, Ninja)
             this.game.physics.startSystem(_phaser2.default.Physics.ARCADE);
 
-            this.game.stage.setBackgroundColor('#dedede');
+            this.game.stage.setBackgroundColor('#E43AF1');
 
             //Initial Load State
             this.game.state.start('LoadState');

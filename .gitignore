@@ -1,4 +1,5 @@
 node_modules
-build
+public
 *.log
 *.tmp
+npm-debug.log*
