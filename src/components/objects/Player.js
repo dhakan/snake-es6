@@ -5,7 +5,7 @@ import Game from './Game';
 class Player extends Phaser.Group {
 
     constructor(game, gridSize) {
-        super(game);
+        super(game, null, 'Player', true, true);
 
         this._gridSize = gridSize;
         this._direction = 'right';
