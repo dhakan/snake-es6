@@ -2,6 +2,11 @@ import Phaser from 'phaser';
 
 class Debugger {
 
+    /**
+     * Debugger constructor
+     * @param game the game to debug
+     * @param sprite the sprite to debug
+     */
     constructor(game, sprite) {
         this._game = game;
         this._sprite = sprite;
@@ -11,6 +16,10 @@ class Debugger {
         this._KEY_DEBUG.onDown.add(this._toggle.bind(this), this);
     }
 
+    /**
+     * Toggles the showing of the debug
+     * @private
+     */
     _toggle() {
         this._showDebug = (this._showDebug) ? false : true;
 
@@ -19,6 +28,9 @@ class Debugger {
         }
     }
 
+    /**
+     * Renders the debug information
+     */
     render() {
         if (this._showDebug) {
             this._game.debug.bodyInfo(this._sprite, 20, 20);

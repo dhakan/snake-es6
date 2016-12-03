@@ -3,6 +3,10 @@ import constants from '../utils/constants';
 
 class Player extends Phaser.Group {
 
+    /**
+     * Player constructor
+     * @param {Phaser.Game} game the game by which to spawn the player
+     */
     constructor(game) {
         super(game, null, 'Player', true, true);
 
@@ -13,6 +17,9 @@ class Player extends Phaser.Group {
         this.setAll('body.collideWorldBounds', true);
     }
 
+    /**
+     * Expands the player body by adding a new body part
+     */
     expandBody() {
         const bodyPart = this.create(constants.GRID_SIZE, constants.GRID_SIZE, 'snake');
 
@@ -23,10 +30,17 @@ class Player extends Phaser.Group {
         bodyPart.animations.play('walk', constants.PLAYER_FRAMERATE, true);
     }
 
+    /**
+     * Sets the direction of the player
+     * @param newDirection the new direction
+     */
     setDirection(newDirection) {
         this._direction = newDirection;
     }
 
+    /**
+     * Moves the player
+     */
     move() {
         for (let bodyPart of this.children) {
             bodyPart.body.velocity.set(0, 0);
