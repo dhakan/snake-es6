@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import BodyPart from './BodyPart';
 import constants from '../utils/constants';
 
 class Player extends Phaser.Group {
@@ -11,23 +12,18 @@ class Player extends Phaser.Group {
         super(game, null, 'Player', true, true);
 
         this._direction = constants.directions.RIGHT;
+        this._moveTimer = 0;
 
         this.expandBody();
-
-        this.setAll('body.collideWorldBounds', true);
     }
 
     /**
      * Expands the player body by adding a new body part
      */
     expandBody() {
-        const bodyPart = this.create(constants.GRID_SIZE, constants.GRID_SIZE, 'snake');
+        const bodyPart = new BodyPart(this.game, 0, 0);
 
-        // bodyPart.width = constants.GRID_SIZE;
-        // bodyPart.height = constants.GRID_SIZE;
-
-        bodyPart.animations.add('walk');
-        bodyPart.animations.play('walk', constants.PLAYER_FRAMERATE, true);
+        this.add(bodyPart);
     }
 
     /**
@@ -42,18 +38,20 @@ class Player extends Phaser.Group {
      * Moves the player
      */
     move() {
-        for (let bodyPart of this.children) {
-            bodyPart.body.velocity.set(0, 0);
-
-            if (this._direction === constants.directions.LEFT) {
-                bodyPart.body.velocity.x = -constants.PLAYER_VELOCITY;
-            } else if (this._direction === constants.directions.RIGHT) {
-                bodyPart.body.velocity.x = constants.PLAYER_VELOCITY;
-            } else if (this._direction === constants.directions.UP) {
-                bodyPart.body.velocity.y = -constants.PLAYER_VELOCITY;
-            } else {
-                bodyPart.body.velocity.y = constants.PLAYER_VELOCITY;
+        if (this.game.time.now > this._moveTimer) {
+            for (let bodyPart of this.children) {
+                if (this._direction === constants.directions.LEFT) {
+                    bodyPart.x += -constants.GRID_SIZE;
+                } else if (this._direction === constants.directions.RIGHT) {
+                    bodyPart.x += constants.GRID_SIZE;
+                } else if (this._direction === constants.directions.UP) {
+                    bodyPart.y += -constants.GRID_SIZE;
+                } else {
+                    bodyPart.y += constants.GRID_SIZE;
+                }
             }
+
+            this._moveTimer = this.game.time.now + constants.PLAYER_MOVE_TIMER;
         }
     }
 }
