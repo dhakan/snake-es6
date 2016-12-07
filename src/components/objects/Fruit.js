@@ -1,20 +1,20 @@
 import Phaser from 'phaser';
 import constants from '../utils/constants';
 
-class BodyPart extends Phaser.Sprite {
+class Fruit extends Phaser.Sprite {
 
     /**
-     * BodyPart constructor
+     * Fruit constructor
      * @param {Phaser.Game} game the game by which to spawn the player
      */
     constructor(game, x, y) {
-        super(game, x, y, 'snake');
+        super(game, x, y, 'fruit');
 
         this.width = constants.GRID_SIZE;
         this.height = constants.GRID_SIZE;
         this.game.physics.enable(this);
-        this.body.collideWorldBounds = true;
+        game.add.existing(this);
     }
 }
 
-export default BodyPart;
+export default Fruit;

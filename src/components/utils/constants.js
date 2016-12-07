@@ -4,13 +4,17 @@
  */
 const constants = {
     BACKGROUND_COLOR: '#E43AF1',
-    GRID_SIZE: 50,
-    PLAYER_MOVE_TIMER: 40,
+    GRID_SIZE: 25,
+    PLAYER_MOVE_TIMER: 280,
     directions: {
         UP: 'up',
         DOWN: 'down',
         RIGHT: 'right',
         LEFT: 'left'
+    },
+    world: {
+        WIDTH: 800,
+        HEIGHT: 500
     }
 };
 

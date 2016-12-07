@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
+
 import Player from '../objects/Player';
 import Debugger from '../objects/Debugger';
+import Fruit from '../objects/Fruit';
+
 import constants from '../utils/constants';
 
 class GameState extends Phaser.State {
@@ -26,9 +29,26 @@ class GameState extends Phaser.State {
 
         this._player = new Player(this.game);
 
+        this._fruits = [];
+
+        for (let i = 0; i <= 20; i++) {
+
+            this._spawnFruit();
+
+        }
+
         this._cursorKeys = this.game.input.keyboard.createCursorKeys();
 
         this._debugger = new Debugger(this.game, this._player.children[0]);
+    }
+
+    /**
+     * Spawns a fruit on a random grid position.
+     */
+    _spawnFruit() {
+        const fruit = new Fruit(this.game, this.game.getRandomGridPosition(), this.game.getRandomGridPosition());
+
+        this._fruits.push(fruit);
     }
 
     /**
