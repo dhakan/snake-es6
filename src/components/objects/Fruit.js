@@ -13,7 +13,18 @@ class Fruit extends Phaser.Sprite {
         this.width = constants.GRID_SIZE;
         this.height = constants.GRID_SIZE;
         this.game.physics.enable(this);
+        this.body.onCollide = new Phaser.Signal();
+        this.addOnCollisionListener(this._handleCollision, this);
+
         game.add.existing(this);
+    }
+
+    _handleCollision() {
+        this.kill();
+    }
+
+    addOnCollisionListener(callback) {
+        this.body.onCollide.add(callback, this);
     }
 }
 

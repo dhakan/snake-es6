@@ -17,11 +17,20 @@ class Player extends Phaser.Group {
         this.expandBody();
     }
 
+    _onBodyPartCollision() {
+        const bodyPart = this.children[this.children.length - 1],
+            oldPos = bodyPart.oldPos;
+
+        this.expandBody(oldPos);
+    }
+
     /**
      * Expands the player body by adding a new body part
      */
-    expandBody() {
-        const bodyPart = new BodyPart(this.game, 0, 0);
+    expandBody(pos = { x: 0, y: 0 }) {
+        const bodyPart = new BodyPart(this.game, pos.x, pos.y);
+
+        bodyPart.addOnCollisionListener(this._onBodyPartCollision.bind(this));
 
         this.add(bodyPart);
     }
@@ -41,13 +50,13 @@ class Player extends Phaser.Group {
         if (this.game.time.now > this._moveTimer) {
             for (let bodyPart of this.children) {
                 if (this._direction === constants.directions.LEFT) {
-                    bodyPart.x += -constants.GRID_SIZE;
+                    bodyPart.xPos += -constants.GRID_SIZE;
                 } else if (this._direction === constants.directions.RIGHT) {
-                    bodyPart.x += constants.GRID_SIZE;
+                    bodyPart.xPos += constants.GRID_SIZE;
                 } else if (this._direction === constants.directions.UP) {
-                    bodyPart.y += -constants.GRID_SIZE;
+                    bodyPart.yPos += -constants.GRID_SIZE;
                 } else {
-                    bodyPart.y += constants.GRID_SIZE;
+                    bodyPart.yPos += constants.GRID_SIZE;
                 }
             }
 

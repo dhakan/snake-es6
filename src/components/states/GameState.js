@@ -31,10 +31,8 @@ class GameState extends Phaser.State {
 
         this._fruits = [];
 
-        for (let i = 0; i <= 20; i++) {
-
+        for (let i = 0; i <= 10; i++) {
             this._spawnFruit();
-
         }
 
         this._cursorKeys = this.game.input.keyboard.createCursorKeys();
@@ -51,11 +49,18 @@ class GameState extends Phaser.State {
         this._fruits.push(fruit);
     }
 
+    _detectCollisions() {
+        for (let fruit of this._fruits) {
+            this.game.physics.arcade.collide(this._player, fruit);
+        }
+    }
+
     /**
      * NOTE: Called by the Phaser engine
      * Updates the game
      */
     update() {
+        // TODO possibly move this to Player.js?
         if (this._cursorKeys.left.isDown) {
             this._player.setDirection(constants.directions.LEFT);
         } else if (this._cursorKeys.right.isDown) {
@@ -67,6 +72,7 @@ class GameState extends Phaser.State {
         }
 
         this._player.move();
+        this._detectCollisions();
     }
 
     /**

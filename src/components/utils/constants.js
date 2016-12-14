@@ -4,8 +4,8 @@
  */
 const constants = {
     BACKGROUND_COLOR: '#E43AF1',
-    GRID_SIZE: 25,
-    PLAYER_MOVE_TIMER: 280,
+    GRID_SIZE: 20,
+    PLAYER_MOVE_TIMER: 50,
     directions: {
         UP: 'up',
         DOWN: 'down',
