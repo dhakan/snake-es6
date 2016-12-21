@@ -5,7 +5,7 @@
 const constants = {
     BACKGROUND_COLOR: '#E43AF1',
     GRID_SIZE: 20,
-    PLAYER_MOVE_TIMER: 50,
+    PLAYER_MOVE_TIMER: 40,
     directions: {
         UP: 'up',
         DOWN: 'down',
