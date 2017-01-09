@@ -4,6 +4,8 @@ import Player from '../objects/Player';
 import Debugger from '../objects/Debugger';
 import Fruit from '../objects/Fruit';
 
+import NetworkHandler from 'src/components/objects/NetworkHandler';
+
 import constants from '../utils/constants';
 
 class GameState extends Phaser.State {
@@ -27,17 +29,40 @@ class GameState extends Phaser.State {
         this.game.stage.setBackgroundColor(constants.BACKGROUND_COLOR);
         this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
 
-        this._player = new Player(this.game);
+        this._players = [];
 
-        this._fruits = [];
+        this._networkHandler = new NetworkHandler();
 
-        for (let i = 0; i <= 1; i++) {
-            this._spawnFruit();
-        }
+        this._networkHandler.addOnPlayersChangedListener((players) => {
 
-        this._cursorKeys = this.game.input.keyboard.createCursorKeys();
+            for (const player of this._players) {
+                player.destroy();
+            }
 
-        this._debugger = new Debugger(this.game, this._player.children[0]);
+            this._players = [];
+
+            console.log('GameState', players);
+
+            for (const playerModel of players) {
+                const player = new Player(playerModel, this.game);
+
+                this._players.push(player);
+            }
+        });
+
+        this._networkHandler.connect();
+
+        // this._player = new Player(this.game);
+
+        // this._fruits = [];
+
+        // for (let i = 0; i <= 1; i++) {
+        //     this._spawnFruit();
+        // }
+
+        // this._cursorKeys = this.game.input.keyboard.createCursorKeys();
+
+        // this._debugger = new Debugger(this.game, this._player.children[0]);
     }
 
     /**
@@ -61,18 +86,18 @@ class GameState extends Phaser.State {
      */
     update() {
         // TODO possibly move this to Player.js?
-        if (this._cursorKeys.left.isDown) {
-            this._player.setDirection(constants.directions.LEFT);
-        } else if (this._cursorKeys.right.isDown) {
-            this._player.setDirection(constants.directions.RIGHT);
-        } else if (this._cursorKeys.up.isDown) {
-            this._player.setDirection(constants.directions.UP);
-        } else if (this._cursorKeys.down.isDown) {
-            this._player.setDirection(constants.directions.DOWN);
-        }
+        // if (this._cursorKeys.left.isDown) {
+        //     this._player.setDirection(constants.directions.LEFT);
+        // } else if (this._cursorKeys.right.isDown) {
+        //     this._player.setDirection(constants.directions.RIGHT);
+        // } else if (this._cursorKeys.up.isDown) {
+        //     this._player.setDirection(constants.directions.UP);
+        // } else if (this._cursorKeys.down.isDown) {
+        //     this._player.setDirection(constants.directions.DOWN);
+        // }
 
-        this._player.move();
-        this._detectCollisions();
+        //this._player.move();
+        // this._detectCollisions();
     }
 
     /**
@@ -80,7 +105,7 @@ class GameState extends Phaser.State {
      * Renders the game
      */
     render() {
-        this._debugger.render();
+        // this._debugger.render();
     }
 
 }
