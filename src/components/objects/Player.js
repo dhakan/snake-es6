@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import BodyPart from './BodyPart';
-import constants from '../utils/constants';
 
 class Player extends Phaser.Group {
 
@@ -12,7 +11,7 @@ class Player extends Phaser.Group {
     constructor(data, game) {
         super(game, null, 'Player', true, true);
 
-        this._direction = constants.directions.RIGHT;
+        // this._direction = game..directions.RIGHT;
         this._moveTimer = 0;
 
         for (const bodyPart of data._bodyParts) {
@@ -21,8 +20,6 @@ class Player extends Phaser.Group {
                 y: bodyPart._y,
             });
         }
-        // this.expandBody();
-        // this.expandBody();
     }
 
     _onBodyPartCollision() {
@@ -54,32 +51,32 @@ class Player extends Phaser.Group {
      * Moves the player
      */
     move() {
-        if (this.game.time.now < this._moveTimer) {
-            return;
-        }
-
-        const tail = this.children.pop(),
-            head = this.children[0];
-
-        let newHeadX = head.position.x,
-            newHeadY = head.position.y;
-
-        if (this._direction === constants.directions.LEFT) {
-            newHeadX += -constants.GRID_SIZE;
-        } else if (this._direction === constants.directions.RIGHT) {
-            newHeadX += constants.GRID_SIZE;
-        } else if (this._direction === constants.directions.UP) {
-            newHeadY += -constants.GRID_SIZE;
-        } else {
-            newHeadY += constants.GRID_SIZE;
-        }
-
-        this.children.unshift(tail);
-
-        tail.xPos = newHeadX;
-        tail.yPos = newHeadY;
-
-        this._moveTimer = this.game.time.now + constants.PLAYER_MOVE_TIMER;
+        // if (this.game.time.now < this._moveTimer) {
+        //     return;
+        // }
+        //
+        // const tail = this.children.pop(),
+        //     head = this.children[0];
+        //
+        // let newHeadX = head.position.x,
+        //     newHeadY = head.position.y;
+        //
+        // if (this._direction === constants.directions.LEFT) {
+        //     newHeadX += -constants.GRID_SIZE;
+        // } else if (this._direction === constants.directions.RIGHT) {
+        //     newHeadX += constants.GRID_SIZE;
+        // } else if (this._direction === constants.directions.UP) {
+        //     newHeadY += -constants.GRID_SIZE;
+        // } else {
+        //     newHeadY += constants.GRID_SIZE;
+        // }
+        //
+        // this.children.unshift(tail);
+        //
+        // tail.xPos = newHeadX;
+        // tail.yPos = newHeadY;
+        //
+        // this._moveTimer = this.game.time.now + constants.PLAYER_MOVE_TIMER;
     }
 }
 

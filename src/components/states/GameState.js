@@ -1,14 +1,16 @@
 import Phaser from 'phaser';
 
 import Player from '../objects/Player';
-import Debugger from '../objects/Debugger';
+// import Debugger from '../objects/Debugger';
 import Fruit from '../objects/Fruit';
 
 import NetworkHandler from 'src/components/objects/NetworkHandler';
 
-import constants from '../utils/constants';
-
 class GameState extends Phaser.State {
+
+    init(networkHandler) {
+        this._networkHandler = networkHandler;
+    }
 
     /**
      * NOTE: Called by the Phaser engine
@@ -26,12 +28,10 @@ class GameState extends Phaser.State {
      */
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.stage.setBackgroundColor(constants.BACKGROUND_COLOR);
+        this.game.stage.setBackgroundColor(this.game.settings.BACKGROUND_COLOR);
         this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
 
         this._players = [];
-
-        this._networkHandler = new NetworkHandler();
 
         this._networkHandler.addOnPlayersChangedListener((players) => {
 
@@ -41,8 +41,6 @@ class GameState extends Phaser.State {
 
             this._players = [];
 
-            console.log('GameState', players);
-
             for (const playerModel of players) {
                 const player = new Player(playerModel, this.game);
 
@@ -50,7 +48,11 @@ class GameState extends Phaser.State {
             }
         });
 
-        this._networkHandler.connect();
+        // this._networkHandler.on("playersReceived", (payload) =>{
+        //     console.log(paload);
+        // });
+
+        // this._networkHandler.connect();
 
         // this._player = new Player(this.game);
 

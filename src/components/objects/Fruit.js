@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import constants from '../utils/constants';
 
 class Fruit extends Phaser.Sprite {
 
@@ -10,8 +9,8 @@ class Fruit extends Phaser.Sprite {
     constructor(game, x, y) {
         super(game, x, y, 'fruit');
 
-        this.width = constants.GRID_SIZE;
-        this.height = constants.GRID_SIZE;
+        // this.width = constants.GRID_SIZE;
+        // this.height = constants.GRID_SIZE;
         this.game.physics.enable(this);
         this.body.onCollide = new Phaser.Signal();
         this.addOnCollisionListener(this._handleCollision, this);

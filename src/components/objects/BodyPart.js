@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import constants from '../utils/constants';
 
 class BodyPart extends Phaser.Sprite {
 
@@ -15,8 +14,8 @@ class BodyPart extends Phaser.Sprite {
             y: y
         };
 
-        this.width = constants.GRID_SIZE;
-        this.height = constants.GRID_SIZE;
+        this.width = this.game.settings.GRID_SIZE;
+        this.height = this.game.settings.GRID_SIZE;
         this.game.physics.enable(this);
         this.body.collideWorldBounds = true;
         this.body.onCollide = new Phaser.Signal();
