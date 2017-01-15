@@ -42,6 +42,8 @@ class NetworkHandler {
     _onPlayersReceived(payload) {
         const players = new Map(payload);
 
+        this._players = [];
+
         for (const player of players.values()) {
             this._players.push(new PlayerModel(player));
         }
@@ -57,7 +59,7 @@ class NetworkHandler {
 
     addOnPlayersChangedListener(callback) {
         this._onPlayersChangedCallbacks.push(callback);
-        this._fireOnPlayersChanged();
+        callback(this._players);
     }
 
     addOnConnectionListener(callback) {
