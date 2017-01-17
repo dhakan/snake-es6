@@ -2,11 +2,7 @@ import io from 'socket.io-client'
 
 import PlayerModel from 'src/components/models/PlayerModel';
 
-const messages = {
-    YOU_CONNECTED: 'you-connected',
-    GAME_STARTED: 'game-started',
-    PLAYERS: 'players',
-}
+const YOU_CONNECTED = 'you-connected';
 
 class NetworkHandler {
 
@@ -18,25 +14,26 @@ class NetworkHandler {
         this._onPlayersChangedCallbacks = [];
         this._onConnectionCallbacks = [];
 
+        this._messages = null;
+
         this._players = [];
     }
 
-    connect() {
-        this._socket = io(this._url);
+    _onConnected(payload) {
+        console.log('YOU_CONNECTED');
 
-        this._socket.on(messages.YOU_CONNECTED, (payload) => {
-            console.log('YOU_CONNECTED');
+        this._messages = payload.settings.messages;
 
-            for (const callback of this._onConnectionCallbacks) {
-                callback(payload);
-            }
-        });
+        for (const callback of this._onConnectionCallbacks) {
+            callback(payload);
+        }
 
-        this._socket.on(messages.GAME_STARTED, (payload) => {
-            console.log('GAME STARTED!');
-        });
+        this._socket.on(this._messages.GAME_STARTED, this._onGameStarted.bind(this));
+        this._socket.on(this._messages.PLAYERS, this._onPlayersReceived.bind(this));
+    }
 
-        this._socket.on(messages.PLAYERS, this._onPlayersReceived.bind(this));
+    _onGameStarted(payload) {
+        console.log('GAME STARTED!');
     }
 
     _onPlayersReceived(payload) {
@@ -55,6 +52,16 @@ class NetworkHandler {
         for (const callback of this._onPlayersChangedCallbacks) {
             callback(this._players);
         }
+    }
+
+    connect() {
+        this._socket = io(this._url);
+
+        this._socket.on(YOU_CONNECTED, this._onConnected.bind(this));
+    }
+
+    sendPlayerAction(input) {
+        this._socket.emit(this._messages.PLAYER_ACTION, input);
     }
 
     addOnPlayersChangedListener(callback) {

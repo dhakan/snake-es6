@@ -48,6 +48,11 @@ class GameState extends Phaser.State {
             }
         });
 
+        this._cursorKeys = this.game.input.keyboard.createCursorKeys();
+
+        this._currentDirection = null;
+        this._oldDirection = null;
+
         // this._networkHandler.on("playersReceived", (payload) =>{
         //     console.log(paload);
         // });
@@ -61,8 +66,6 @@ class GameState extends Phaser.State {
         // for (let i = 0; i <= 1; i++) {
         //     this._spawnFruit();
         // }
-
-        // this._cursorKeys = this.game.input.keyboard.createCursorKeys();
 
         // this._debugger = new Debugger(this.game, this._player.children[0]);
     }
@@ -87,16 +90,21 @@ class GameState extends Phaser.State {
      * Updates the game
      */
     update() {
-        // TODO possibly move this to Player.js?
-        // if (this._cursorKeys.left.isDown) {
-        //     this._player.setDirection(constants.directions.LEFT);
-        // } else if (this._cursorKeys.right.isDown) {
-        //     this._player.setDirection(constants.directions.RIGHT);
-        // } else if (this._cursorKeys.up.isDown) {
-        //     this._player.setDirection(constants.directions.UP);
-        // } else if (this._cursorKeys.down.isDown) {
-        //     this._player.setDirection(constants.directions.DOWN);
-        // }
+        if (this._cursorKeys.left.isDown) {
+            this._currentDirection = this.game.settings.playerActions.directions.LEFT;
+        } else if (this._cursorKeys.right.isDown) {
+            this._currentDirection = this.game.settings.playerActions.directions.RIGHT;
+        } else if (this._cursorKeys.up.isDown) {
+            this._currentDirection = this.game.settings.playerActions.directions.UP;
+        } else if (this._cursorKeys.down.isDown) {
+            this._currentDirection = this.game.settings.playerActions.directions.DOWN;
+        }
+
+        if (this._currentDirection !== this._oldDirection) {
+            this._networkHandler.sendPlayerAction(this._currentDirection);
+        }
+
+        this._oldDirection = this._currentDirection;
 
         //this._player.move();
         // this._detectCollisions();
