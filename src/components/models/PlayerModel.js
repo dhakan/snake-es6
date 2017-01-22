@@ -7,7 +7,7 @@ class PlayerModel {
         this._id = data._id;
         this._bodyParts = data._bodyParts;
 
-        console.log(this._id, this._bodyParts);
+        // console.log(this._id, this._bodyParts);
     }
 }
 

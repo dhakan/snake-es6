@@ -10,7 +10,6 @@ class NetworkHandler {
      * NetworkHandler constructor
      */
     constructor() {
-        this._url = 'http://localhost:3000';
         this._onPlayersChangedCallbacks = [];
         this._onConnectionCallbacks = [];
 
@@ -55,7 +54,7 @@ class NetworkHandler {
     }
 
     connect() {
-        this._socket = io(this._url);
+        this._socket = io();
 
         this._socket.on(YOU_CONNECTED, this._onConnected.bind(this));
     }
