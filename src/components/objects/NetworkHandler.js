@@ -1,4 +1,5 @@
-import io from 'socket.io-client'
+import io from 'socket.io-client';
+import utils from 'src/components/utils/utils';
 
 import PlayerModel from 'src/components/models/PlayerModel';
 
@@ -54,7 +55,11 @@ class NetworkHandler {
     }
 
     connect() {
-        this._socket = io();
+        if (utils.SERVER_HOST) {
+            this._socket = io(utils.SERVER_HOST);
+        } else {
+            this._socket = io();
+        }
 
         this._socket.on(YOU_CONNECTED, this._onConnected.bind(this));
     }
