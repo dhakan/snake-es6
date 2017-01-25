@@ -1,7 +1,7 @@
 {
-  "name": "snake-es6",
+  "name": "snake-client",
   "version": "0.0.0",
-  "description": "Snake ES6",
+  "description": "Snake Client",
   "main": "src/index.js",
   "scripts": {
     "start": "brunch watch --server",

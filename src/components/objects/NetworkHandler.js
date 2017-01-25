@@ -2,6 +2,8 @@ import io from 'socket.io-client';
 import utils from 'src/components/utils/utils';
 
 import PlayerModel from 'src/components/models/PlayerModel';
+import FruitModel from 'src/components/models/FruitModel';
+import GameStateModel from 'src/components/models/GameStateModel';
 
 const YOU_CONNECTED = 'you-connected';
 
@@ -11,7 +13,7 @@ class NetworkHandler {
      * NetworkHandler constructor
      */
     constructor() {
-        this._onPlayersChangedCallbacks = [];
+        this._onGameStateChangedCallbacks = [];
         this._onConnectionCallbacks = [];
 
         this._messages = null;
@@ -29,28 +31,40 @@ class NetworkHandler {
         }
 
         this._socket.on(this._messages.GAME_STARTED, this._onGameStarted.bind(this));
-        this._socket.on(this._messages.PLAYERS, this._onPlayersReceived.bind(this));
+        this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
     }
 
     _onGameStarted(payload) {
         console.log('GAME STARTED!');
     }
 
-    _onPlayersReceived(payload) {
-        const players = new Map(payload);
+    _onGameStateReceived(payload) {
+        const players = new Map(payload.players);
+        const fruits = new Map(payload.fruits);
 
+        this._gameState = null;
         this._players = [];
+        this._fruits = [];
 
         for (const player of players.values()) {
             this._players.push(new PlayerModel(player));
         }
 
-        this._fireOnPlayersChanged();
+        for (const fruit of fruits.values()) {
+            this._fruits.push(new FruitModel(fruit));
+        }
+
+        this._gameState = new GameStateModel({
+            players: this._players,
+            fruits: this._fruits,
+        });
+
+        this._fireOnGameStateChanged();
     }
 
-    _fireOnPlayersChanged() {
-        for (const callback of this._onPlayersChangedCallbacks) {
-            callback(this._players);
+    _fireOnGameStateChanged() {
+        for (const callback of this._onGameStateChangedCallbacks) {
+            callback(this._gameState);
         }
     }
 
@@ -68,9 +82,9 @@ class NetworkHandler {
         this._socket.emit(this._messages.PLAYER_ACTION, input);
     }
 
-    addOnPlayersChangedListener(callback) {
-        this._onPlayersChangedCallbacks.push(callback);
-        callback(this._players);
+    addOnGameStateChangedListener(callback) {
+        this._onGameStateChangedCallbacks.push(callback);
+        callback(this._gameState);
     }
 
     addOnConnectionListener(callback) {

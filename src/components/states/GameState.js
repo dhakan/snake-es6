@@ -32,8 +32,9 @@ class GameState extends Phaser.State {
         this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
 
         this._players = [];
+        this._fruits = [];
 
-        this._networkHandler.addOnPlayersChangedListener((players) => {
+        this._networkHandler.addOnGameStateChangedListener((gameState) => {
 
             for (const player of this._players) {
                 player.destroy();
@@ -41,10 +42,14 @@ class GameState extends Phaser.State {
 
             this._players = [];
 
-            for (const playerModel of players) {
+            for (const playerModel of gameState.players) {
                 const player = new Player(playerModel, this.game);
 
                 this._players.push(player);
+            }
+
+            for (const fruitModel of gameState.fruits) {
+                this._spawnFruit(fruitModel);
             }
         });
 
@@ -61,8 +66,6 @@ class GameState extends Phaser.State {
 
         // this._player = new Player(this.game);
 
-        // this._fruits = [];
-
         // for (let i = 0; i <= 1; i++) {
         //     this._spawnFruit();
         // }
@@ -73,8 +76,8 @@ class GameState extends Phaser.State {
     /**
      * Spawns a fruit on a random grid position.
      */
-    _spawnFruit() {
-        const fruit = new Fruit(this.game, this.game.getRandomGridPosition(), this.game.getRandomGridPosition());
+    _spawnFruit(fruitModel) {
+        const fruit = new Fruit(this.game, fruitModel.x, fruitModel.y);
 
         this._fruits.push(fruit);
     }
