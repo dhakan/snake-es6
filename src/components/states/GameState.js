@@ -42,6 +42,12 @@ class GameState extends Phaser.State {
 
             this._players = [];
 
+            for (const fruit of this._fruits) {
+                fruit.kill();
+            }
+
+            this._fruits = [];
+
             for (const playerModel of gameState.players) {
                 const player = new Player(playerModel, this.game);
 
