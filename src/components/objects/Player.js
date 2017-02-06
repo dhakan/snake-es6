@@ -34,7 +34,7 @@ class Player extends Phaser.Group {
     expandBody(pos = { x: 0, y: 0 }) {
         const bodyPart = new BodyPart(this.game, pos.x, pos.y);
 
-        bodyPart.addOnCollisionListener(this._onBodyPartCollision.bind(this));
+        // bodyPart.addOnCollisionListener(this._onBodyPartCollision.bind(this));
 
         this.add(bodyPart);
     }

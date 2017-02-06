@@ -17,7 +17,7 @@ class BodyPart extends Phaser.Sprite {
         this.width = this.game.settings.GRID_SIZE;
         this.height = this.game.settings.GRID_SIZE;
         this.game.physics.enable(this);
-        this.body.collideWorldBounds = true;
+        // this.body.collideWorldBounds = true;
         this.body.onCollide = new Phaser.Signal();
     }
 
