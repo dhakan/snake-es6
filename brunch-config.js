@@ -1,7 +1,7 @@
 module.exports = {
     paths: {
         public: 'public',
-        watched: ['vendor', 'src']
+        watched: ['src']
     },
     files: {
         stylesheets: {
