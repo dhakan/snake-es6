@@ -11,14 +11,11 @@ class Player extends Phaser.Group {
     constructor(data, game) {
         super(game, null, 'Player', true, true);
 
-        // this._direction = game..directions.RIGHT;
-        this._moveTimer = 0;
-
         for (const bodyPart of data._bodyParts) {
             this.expandBody({
                 x: bodyPart._x,
                 y: bodyPart._y,
-            });
+            }, data._color);
         }
     }
 
@@ -31,8 +28,8 @@ class Player extends Phaser.Group {
     /**
      * Expands the player body by adding a new body part
      */
-    expandBody(pos = { x: 0, y: 0 }) {
-        const bodyPart = new BodyPart(this.game, pos.x, pos.y);
+    expandBody(pos = { x: 0, y: 0 }, color) {
+        const bodyPart = new BodyPart(this.game, pos.x, pos.y, color);
 
         // bodyPart.addOnCollisionListener(this._onBodyPartCollision.bind(this));
 

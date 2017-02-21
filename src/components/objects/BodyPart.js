@@ -6,13 +6,15 @@ class BodyPart extends Phaser.Sprite {
      * BodyPart constructor
      * @param {Phaser.Game} game the game by which to spawn the player
      */
-    constructor(game, x, y) {
+    constructor(game, x, y, color) {
         super(game, x, y, 'snake');
 
         this.oldPos = {
             x: x,
             y: y
         };
+
+        this.tint = Phaser.Color.hexToColor(color._value).color;
 
         this.width = this.game.settings.GRID_SIZE;
         this.height = this.game.settings.GRID_SIZE;
