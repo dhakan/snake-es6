@@ -100,13 +100,13 @@ class GameState extends Phaser.State {
      */
     update() {
         if (this._cursorKeys.left.isDown) {
-            this._currentDirection = this.game.settings.playerActions.directions.LEFT;
+            this._currentDirection = this.game.settings.playerActions.LEFT;
         } else if (this._cursorKeys.right.isDown) {
-            this._currentDirection = this.game.settings.playerActions.directions.RIGHT;
+            this._currentDirection = this.game.settings.playerActions.RIGHT;
         } else if (this._cursorKeys.up.isDown) {
-            this._currentDirection = this.game.settings.playerActions.directions.UP;
+            this._currentDirection = this.game.settings.playerActions.UP;
         } else if (this._cursorKeys.down.isDown) {
-            this._currentDirection = this.game.settings.playerActions.directions.DOWN;
+            this._currentDirection = this.game.settings.playerActions.DOWN;
         }
 
         if (this._currentDirection !== this._oldDirection) {
