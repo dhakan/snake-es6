@@ -4,9 +4,9 @@ class PlayerModel {
      * PlayerModel constructor
      */
     constructor(data) {
-        this._id = data._id;
-        this._color = data._color;
-        this._bodyParts = data._bodyParts;
+        this._id = data.id;
+        this._color = data.color;
+        this._bodyParts = data.bodyParts;
     }
 }
 

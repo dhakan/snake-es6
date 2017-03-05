@@ -4,17 +4,17 @@ class FruitModel {
      * FruitModel constructor
      */
     constructor(data) {
-        this._id = data._id;
-        this._x = data._x;
-        this._y = data._y;
+        this._id = data.id;
+        this._x = data.position.x;
+        this._y = data.position.y;
     }
 
     get x() {
-        return this._x;
+        return this.x;
     }
 
     get y() {
-        return this._y;
+        return this.y;
     }
 }
 
