@@ -35,7 +35,6 @@ class GameState extends Phaser.State {
         this._fruits = [];
 
         this._networkHandler.addOnGameStateChangedListener(gameState => {
-
             for (const player of this._players) {
                 player.destroy();
             }

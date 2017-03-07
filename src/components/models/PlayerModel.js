@@ -1,3 +1,5 @@
+import BodyPartModel from 'src/components/models/BodyPartModel';
+
 class PlayerModel {
 
     /**
@@ -6,7 +8,19 @@ class PlayerModel {
     constructor(data) {
         this._id = data.id;
         this._color = data.color;
-        this._bodyParts = data.bodyParts;
+        this._bodyParts = [];
+
+        for (const bodyPartData of data.bodyParts) {
+            this._bodyParts.push(new BodyPartModel(bodyPartData));
+        }
+    }
+
+    get color() {
+        return this._color;
+    }
+
+    get bodyParts() {
+        return this._bodyParts;
     }
 }
 
