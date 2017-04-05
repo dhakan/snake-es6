@@ -14,7 +14,7 @@ class BodyPart extends Phaser.Sprite {
             y: y
         };
 
-        this.tint = Phaser.Color.hexToColor(color._value).color;
+        this.tint = Phaser.Color.hexToColor(color).color;
 
         this.width = this.game.settings.GRID_SIZE;
         this.height = this.game.settings.GRID_SIZE;

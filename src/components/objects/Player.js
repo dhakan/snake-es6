@@ -5,17 +5,17 @@ class Player extends Phaser.Group {
 
     /**
      * Player constructor
-     * @param {PlayerModel} data the data by which to base the player on
+     * @param {PlayerModel} playerModel the data by which to base the player on
      * @param {Phaser.Game} game the game by which to spawn the player
      */
-    constructor(data, game) {
+    constructor(playerModel, game) {
         super(game, null, 'Player', true, true);
 
-        for (const bodyPart of data._bodyParts) {
+        for (const bodyPart of playerModel.bodyParts) {
             this.expandBody({
                 x: bodyPart._x,
                 y: bodyPart._y,
-            }, data._color);
+            }, playerModel.color);
         }
     }
 

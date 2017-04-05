@@ -39,18 +39,18 @@ class NetworkHandler {
     }
 
     _onGameStateReceived(payload) {
-        const players = new Map(payload.players);
-        const fruits = new Map(payload.fruits);
+        const players = payload.players;
+        const fruits = payload.fruits;
 
         this._gameState = null;
         this._players = [];
         this._fruits = [];
 
-        for (const player of players.values()) {
+        for (const player of players) {
             this._players.push(new PlayerModel(player));
         }
 
-        for (const fruit of fruits.values()) {
+        for (const fruit of fruits) {
             this._fruits.push(new FruitModel(fruit));
         }
 

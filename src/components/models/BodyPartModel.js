@@ -1,7 +1,7 @@
-class FruitModel {
+class BodyPartModel {
 
     /**
-     * FruitModel constructor
+     * BodyPartModel constructor
      */
     constructor(data) {
         this._id = data.id;
@@ -18,4 +18,4 @@ class FruitModel {
     }
 }
 
-export default FruitModel;
+export default BodyPartModel;
