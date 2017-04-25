@@ -18,7 +18,9 @@ class NetworkHandler {
 
         this._messages = null;
 
+        this._gameState = null;
         this._players = [];
+        this._fruits = [];
     }
 
     _onConnected(payload) {
@@ -84,7 +86,10 @@ class NetworkHandler {
 
     addOnGameStateChangedListener(callback) {
         this._onGameStateChangedCallbacks.push(callback);
-        callback(this._gameState);
+
+        if (this._gameState) {
+            callback(this._gameState);
+        }
     }
 
     addOnConnectionListener(callback) {
