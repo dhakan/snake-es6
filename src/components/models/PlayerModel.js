@@ -15,6 +15,10 @@ class PlayerModel {
         }
     }
 
+    get id() {
+        return this._id;
+    }
+
     get color() {
         return this._color;
     }

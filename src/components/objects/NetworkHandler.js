@@ -6,6 +6,7 @@ import FruitModel from 'src/components/models/FruitModel';
 import GameStateModel from 'src/components/models/GameStateModel';
 
 const YOU_CONNECTED = 'you-connected';
+const GAME_STATE = 'game-state';
 
 class NetworkHandler {
 
@@ -13,6 +14,7 @@ class NetworkHandler {
      * NetworkHandler constructor
      */
     constructor() {
+        this._socket = null;
         this._onGameStateChangedCallbacks = [];
         this._onConnectionCallbacks = [];
 
@@ -23,6 +25,10 @@ class NetworkHandler {
         this._fruits = [];
     }
 
+    get id() {
+        return this._socket.id;
+    }
+
     _onConnected(payload) {
         console.log('YOU_CONNECTED');
 
@@ -31,9 +37,6 @@ class NetworkHandler {
         for (const callback of this._onConnectionCallbacks) {
             callback(payload);
         }
-
-        this._socket.on(this._messages.GAME_STARTED, this._onGameStarted.bind(this));
-        this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
     }
 
     _onGameStarted(payload) {
@@ -41,6 +44,7 @@ class NetworkHandler {
     }
 
     _onGameStateReceived(payload) {
+        console.log('GAME STATE!');
         const players = payload.players;
         const fruits = payload.fruits;
 
@@ -78,6 +82,8 @@ class NetworkHandler {
         }
 
         this._socket.on(YOU_CONNECTED, this._onConnected.bind(this));
+        // this._socket.on(this._messages.GAME_STARTED, this._onGameStarted.bind(this));
+        this._socket.on(GAME_STATE, this._onGameStateReceived.bind(this));
     }
 
     sendPlayerAction(input) {
