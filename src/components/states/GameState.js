@@ -9,36 +9,12 @@ import NetworkHandler from 'src/components/objects/NetworkHandler';
 class GameState extends Phaser.State {
 
     _createStageBorder(color) {
-        // this._stageBorder = new Phaser.Line(200, 200, 300, 300);
-        //
-        // this.game.add.graphics(0, 0)
-        //     .lineStyle(10, Phaser.Color.hexToColor(color).color)
-        //     .drawShape(this._stageBorder);
-
-
-        const graphics = this.game.add.graphics(10, 0);
-
-        graphics.lineStyle(1, Phaser.Color.hexToColor(color).color);
-
-        graphics.moveTo(0, 0);
-        graphics.lineTo(0, this.game.settings.world.HEIGHT);
-
-        graphics.moveTo(-10, this.game.settings.world.HEIGHT - 10);
-        graphics.lineTo(this.game.settings.world.WIDTH, this.game.settings.world.HEIGHT - 10);
-
-        graphics.moveTo(this.game.settings.world.WIDTH - 20, this.game.settings.world.HEIGHT - 10);
-        graphics.lineTo(this.game.settings.world.WIDTH - 20, 0);
-
-        // graphics.lineStyle(20, Phaser.Color.hexToColor(color).color);
-        // graphics.lineTo(0, 100);
-        //
-        // graphics.lineStyle(20, Phaser.Color.hexToColor(color).color);
-        // graphics.lineTo(0, 0);
+        const canvas = document.querySelector('canvas');
+        canvas.style.border = `10px solid ${color}`;
     }
 
     init(networkHandler) {
         this._networkHandler = networkHandler;
-        // this._stageBorder = null;
     }
 
     /**
