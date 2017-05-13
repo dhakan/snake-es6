@@ -6,7 +6,7 @@ module.exports = {
     files: {
         stylesheets: {
             joinTo: {
-                'css/app.css': /^src/
+                'styles/app.css': /^src/
             }
         },
         javascripts: {
@@ -19,7 +19,10 @@ module.exports = {
     plugins: {
         babel: {
             presets: ['es2015']
-        }
+        },
+        sass: {
+            mode: 'native',
+        },
     },
     npm: {
         globals: {

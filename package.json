@@ -4,7 +4,7 @@
   "description": "Snake Client",
   "main": "src/index.js",
   "scripts": {
-    "start": "brunch watch --server",
+    "start": "brunch watch --server --network --port 3334",
     "build": "brunch build --production"
   },
   "repository": {

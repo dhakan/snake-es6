@@ -6,7 +6,6 @@ import FruitModel from 'src/components/models/FruitModel';
 import GameStateModel from 'src/components/models/GameStateModel';
 
 const YOU_CONNECTED = 'you-connected';
-const GAME_STATE = 'game-state';
 
 class NetworkHandler {
 
@@ -17,6 +16,7 @@ class NetworkHandler {
         this._socket = null;
         this._onGameStateChangedCallbacks = [];
         this._onConnectionCallbacks = [];
+        this._onGameRoundInitiatedCallbacks = [];
 
         this._messages = null;
 
@@ -37,10 +37,9 @@ class NetworkHandler {
         for (const callback of this._onConnectionCallbacks) {
             callback(payload);
         }
-    }
 
-    _onGameStarted(payload) {
-        console.log('GAME STARTED!');
+        this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
+        this._socket.on(this._messages.GAME_ROUND_INITIATED, this._onGameRoundInitiated.bind(this));
     }
 
     _onGameStateReceived(payload) {
@@ -68,6 +67,12 @@ class NetworkHandler {
         this._fireOnGameStateChanged();
     }
 
+    _onGameRoundInitiated() {
+        for (const callback of this._onGameRoundInitiatedCallbacks) {
+            callback();
+        }
+    }
+
     _fireOnGameStateChanged() {
         for (const callback of this._onGameStateChangedCallbacks) {
             callback(this._gameState);
@@ -82,8 +87,6 @@ class NetworkHandler {
         }
 
         this._socket.on(YOU_CONNECTED, this._onConnected.bind(this));
-        // this._socket.on(this._messages.GAME_STARTED, this._onGameStarted.bind(this));
-        this._socket.on(GAME_STATE, this._onGameStateReceived.bind(this));
     }
 
     sendPlayerAction(input) {
@@ -92,14 +95,18 @@ class NetworkHandler {
 
     addOnGameStateChangedListener(callback) {
         this._onGameStateChangedCallbacks.push(callback);
-
-        if (this._gameState) {
-            callback(this._gameState);
-        }
     }
 
     addOnConnectionListener(callback) {
         this._onConnectionCallbacks.push(callback);
+    }
+
+    addOnGameRoundInitiatedListener(callback) {
+        this._onGameRoundInitiatedCallbacks.push(callback);
+    }
+
+    emitClientLoaded() {
+        this._socket.emit(this._messages.CLIENT_LOADED);
     }
 }
 

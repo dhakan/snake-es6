@@ -13,6 +13,10 @@ class GameState extends Phaser.State {
         canvas.style.border = `10px solid ${color}`;
     }
 
+    _initCountdown() {
+        console.log('Both players connected and gameround is about to start');
+    }
+
     init(networkHandler) {
         this._networkHandler = networkHandler;
     }
@@ -38,6 +42,8 @@ class GameState extends Phaser.State {
 
         this._players = [];
         this._fruits = [];
+
+        this._networkHandler.emitClientLoaded();
 
         this._networkHandler.addOnGameStateChangedListener(gameState => {
             for (const player of this._players) {
@@ -67,24 +73,14 @@ class GameState extends Phaser.State {
             }
         });
 
+        this._networkHandler.addOnGameRoundInitiatedListener(() => {
+            this._initCountdown();
+        });
+
         this._cursorKeys = this.game.input.keyboard.createCursorKeys();
 
         this._currentDirection = null;
         this._oldDirection = null;
-
-        // this._networkHandler.on("playersReceived", (payload) =>{
-        //     console.log(paload);
-        // });
-
-        // this._networkHandler.connect();
-
-        // this._player = new Player(this.game);
-
-        // for (let i = 0; i <= 1; i++) {
-        //     this._spawnFruit();
-        // }
-
-        // this._debugger = new Debugger(this.game, this._player.children[0]);
     }
 
     /**
@@ -135,7 +131,6 @@ class GameState extends Phaser.State {
         // this.game.debug.geom(this._stageBorder);
         // this._debugger.render();
     }
-
 }
 
 export default GameState;
