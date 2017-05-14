@@ -13,8 +13,9 @@ class GameState extends Phaser.State {
         canvas.style.border = `10px solid ${color}`;
     }
 
-    _initCountdown() {
-        console.log('Both players connected and gameround is about to start');
+    _setCountdownValue(value) {
+        const countdown = document.querySelector('.countdown');
+        countdown.innerHTML = value;
     }
 
     init(networkHandler) {
@@ -74,7 +75,11 @@ class GameState extends Phaser.State {
         });
 
         this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, () => {
-            this._initCountdown();
+            console.log('Both players connected and gameround is about to start');
+        });
+
+        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_COUNTDOWN, countdownValue => {
+            this._setCountdownValue(countdownValue);
         });
 
         this._cursorKeys = this.game.input.keyboard.createCursorKeys();

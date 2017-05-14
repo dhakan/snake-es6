@@ -35,6 +35,7 @@ class NetworkHandler extends EventEmitter {
 
         this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
         this._socket.on(this._messages.GAME_ROUND_INITIATED, this._onGameRoundInitiated.bind(this));
+        this._socket.on(this._messages.GAME_ROUND_COUNTDOWN, this._onGameRoundCountdown.bind(this));
 
         this.emit(NetworkHandler.events.CONNECTED, payload);
     }
@@ -67,6 +68,10 @@ class NetworkHandler extends EventEmitter {
         this.emit(NetworkHandler.events.GAME_ROUND_INITIATED);
     }
 
+    _onGameRoundCountdown(payload) {
+        this.emit(NetworkHandler.events.GAME_ROUND_COUNTDOWN, payload);
+    }
+
     connect() {
         if (utils.SERVER_HOST) {
             this._socket = io(utils.SERVER_HOST);
@@ -90,6 +95,7 @@ NetworkHandler.events = {
     CONNECTED: 'on-connected',
     GAME_STATE: 'on-game-state',
     GAME_ROUND_INITIATED: 'on-game-round-initiated',
+    GAME_ROUND_COUNTDOWN: 'on-game-round-countdown',
 };
 
 export default NetworkHandler;
