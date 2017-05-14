@@ -1,4 +1,6 @@
 import io from 'socket.io-client';
+import EventEmitter from 'eventemitter3';
+
 import utils from 'src/components/utils/utils';
 
 import PlayerModel from 'src/components/models/PlayerModel';
@@ -7,20 +9,17 @@ import GameStateModel from 'src/components/models/GameStateModel';
 
 const YOU_CONNECTED = 'you-connected';
 
-class NetworkHandler {
+class NetworkHandler extends EventEmitter {
 
     /**
      * NetworkHandler constructor
      */
     constructor() {
-        this._socket = null;
-        this._onGameStateChangedCallbacks = [];
-        this._onConnectionCallbacks = [];
-        this._onGameRoundInitiatedCallbacks = [];
+        super();
 
+        this._socket = null;
         this._messages = null;
 
-        this._gameState = null;
         this._players = [];
         this._fruits = [];
     }
@@ -34,12 +33,10 @@ class NetworkHandler {
 
         this._messages = payload.settings.messages;
 
-        for (const callback of this._onConnectionCallbacks) {
-            callback(payload);
-        }
-
         this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
         this._socket.on(this._messages.GAME_ROUND_INITIATED, this._onGameRoundInitiated.bind(this));
+
+        this.emit(NetworkHandler.events.CONNECTED, payload);
     }
 
     _onGameStateReceived(payload) {
@@ -47,7 +44,6 @@ class NetworkHandler {
         const players = payload.players;
         const fruits = payload.fruits;
 
-        this._gameState = null;
         this._players = [];
         this._fruits = [];
 
@@ -59,24 +55,16 @@ class NetworkHandler {
             this._fruits.push(new FruitModel(fruit));
         }
 
-        this._gameState = new GameStateModel({
+        const gameState = new GameStateModel({
             players: this._players,
             fruits: this._fruits,
         });
 
-        this._fireOnGameStateChanged();
+        this.emit(NetworkHandler.events.GAME_STATE, gameState);
     }
 
     _onGameRoundInitiated() {
-        for (const callback of this._onGameRoundInitiatedCallbacks) {
-            callback();
-        }
-    }
-
-    _fireOnGameStateChanged() {
-        for (const callback of this._onGameStateChangedCallbacks) {
-            callback(this._gameState);
-        }
+        this.emit(NetworkHandler.events.GAME_ROUND_INITIATED);
     }
 
     connect() {
@@ -93,21 +81,15 @@ class NetworkHandler {
         this._socket.emit(this._messages.PLAYER_ACTION, input);
     }
 
-    addOnGameStateChangedListener(callback) {
-        this._onGameStateChangedCallbacks.push(callback);
-    }
-
-    addOnConnectionListener(callback) {
-        this._onConnectionCallbacks.push(callback);
-    }
-
-    addOnGameRoundInitiatedListener(callback) {
-        this._onGameRoundInitiatedCallbacks.push(callback);
-    }
-
     emitClientLoaded() {
         this._socket.emit(this._messages.CLIENT_LOADED);
     }
 }
+
+NetworkHandler.events = {
+    CONNECTED: 'on-connected',
+    GAME_STATE: 'on-game-state',
+    GAME_ROUND_INITIATED: 'on-game-round-initiated',
+};
 
 export default NetworkHandler;

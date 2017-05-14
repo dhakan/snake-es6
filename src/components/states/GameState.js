@@ -45,7 +45,7 @@ class GameState extends Phaser.State {
 
         this._networkHandler.emitClientLoaded();
 
-        this._networkHandler.addOnGameStateChangedListener(gameState => {
+        this._networkHandler.on(NetworkHandler.events.GAME_STATE, gameState => {
             for (const player of this._players) {
                 player.destroy();
             }
@@ -73,7 +73,7 @@ class GameState extends Phaser.State {
             }
         });
 
-        this._networkHandler.addOnGameRoundInitiatedListener(() => {
+        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, () => {
             this._initCountdown();
         });
 
