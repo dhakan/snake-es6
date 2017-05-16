@@ -5,7 +5,6 @@ import utils from 'src/components/utils/utils';
 
 import PlayerModel from 'src/components/models/PlayerModel';
 import FruitModel from 'src/components/models/FruitModel';
-import GameStateModel from 'src/components/models/GameStateModel';
 
 const YOU_CONNECTED = 'you-connected';
 
@@ -33,43 +32,63 @@ class NetworkHandler extends EventEmitter {
 
         this._messages = payload.settings.messages;
 
-        this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
+        this._socket.on(this._messages.ROOM_STATE, this._onRoomStateReceived.bind(this));
         this._socket.on(this._messages.GAME_ROUND_INITIATED, this._onGameRoundInitiated.bind(this));
         this._socket.on(this._messages.GAME_ROUND_COUNTDOWN, this._onGameRoundCountdown.bind(this));
+        this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
 
         this.emit(NetworkHandler.events.CONNECTED, payload);
     }
 
-    _onGameStateReceived(payload) {
-        console.log('GAME STATE!');
-        const players = payload.players;
-        const fruits = payload.fruits;
-
+    _createPlayers(players) {
         this._players = [];
-        this._fruits = [];
 
         for (const player of players) {
             this._players.push(new PlayerModel(player));
         }
+    }
+
+    _onRoomStateReceived(payload) {
+        console.log('ROOM_STATE!');
+
+        this._createPlayers(payload.players);
+
+        this.emit(NetworkHandler.events.ROOM_STATE, {
+            players: this._players,
+        });
+    }
+
+    _onGameRoundInitiated(payload) {
+        console.log('GAME_ROUND_INITIATED!');
+
+        this._createPlayers(payload.players);
+
+        this.emit(NetworkHandler.events.GAME_ROUND_INITIATED, {
+            players: this._players,
+        });
+    }
+
+    _onGameRoundCountdown(payload) {
+        this.emit(NetworkHandler.events.GAME_ROUND_COUNTDOWN, payload);
+    }
+
+    _onGameStateReceived(payload) {
+        console.log('GAME STATE!');
+
+        const fruits = payload.fruits;
+
+        this._createPlayers(payload.players);
+
+        this._fruits = [];
 
         for (const fruit of fruits) {
             this._fruits.push(new FruitModel(fruit));
         }
 
-        const gameState = new GameStateModel({
+        this.emit(NetworkHandler.events.GAME_STATE, {
             players: this._players,
             fruits: this._fruits,
         });
-
-        this.emit(NetworkHandler.events.GAME_STATE, gameState);
-    }
-
-    _onGameRoundInitiated() {
-        this.emit(NetworkHandler.events.GAME_ROUND_INITIATED);
-    }
-
-    _onGameRoundCountdown(payload) {
-        this.emit(NetworkHandler.events.GAME_ROUND_COUNTDOWN, payload);
     }
 
     connect() {
@@ -93,9 +112,10 @@ class NetworkHandler extends EventEmitter {
 
 NetworkHandler.events = {
     CONNECTED: 'on-connected',
-    GAME_STATE: 'on-game-state',
+    ROOM_STATE: 'on-room-state',
     GAME_ROUND_INITIATED: 'on-game-round-initiated',
     GAME_ROUND_COUNTDOWN: 'on-game-round-countdown',
+    GAME_STATE: 'on-game-state',
 };
 
 export default NetworkHandler;

@@ -18,6 +18,24 @@ class GameState extends Phaser.State {
         countdown.innerHTML = value;
     }
 
+    _renderPlayers(players) {
+        for (const player of this._players) {
+            player.destroy();
+        }
+
+        this._players = [];
+
+        for (const playerModel of players) {
+            const player = new Player(playerModel, this.game);
+
+            this._players.push(player);
+
+            if (playerModel.id === this._networkHandler.id) {
+                this._createStageBorder(playerModel.color);
+            }
+        }
+    }
+
     init(networkHandler) {
         this._networkHandler = networkHandler;
     }
@@ -46,40 +64,30 @@ class GameState extends Phaser.State {
 
         this._networkHandler.emitClientLoaded();
 
+        this._networkHandler.on(NetworkHandler.events.ROOM_STATE, payload => {
+            this._renderPlayers(payload.players);
+        });
+
+        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, payload => {
+            this._renderPlayers(payload.players);
+        });
+
+        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_COUNTDOWN, countdownValue => {
+            this._setCountdownValue(countdownValue);
+        });
+
         this._networkHandler.on(NetworkHandler.events.GAME_STATE, gameState => {
-            for (const player of this._players) {
-                player.destroy();
-            }
-
-            this._players = [];
-
             for (const fruit of this._fruits) {
                 fruit.kill();
             }
 
             this._fruits = [];
 
-            for (const playerModel of gameState.players) {
-                const player = new Player(playerModel, this.game);
-
-                this._players.push(player);
-
-                if (playerModel.id === this._networkHandler.id) {
-                    this._createStageBorder(playerModel.color);
-                }
-            }
-
             for (const fruitModel of gameState.fruits) {
                 this._spawnFruit(fruitModel);
             }
-        });
 
-        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, () => {
-            console.log('Both players connected and gameround is about to start');
-        });
-
-        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_COUNTDOWN, countdownValue => {
-            this._setCountdownValue(countdownValue);
+            this._renderPlayers(gameState.players);
         });
 
         this._cursorKeys = this.game.input.keyboard.createCursorKeys();
