@@ -1,26 +1,30 @@
 import io from 'socket.io-client';
+import EventEmitter from 'eventemitter3';
+
 import utils from 'src/components/utils/utils';
 
 import PlayerModel from 'src/components/models/PlayerModel';
 import FruitModel from 'src/components/models/FruitModel';
-import GameStateModel from 'src/components/models/GameStateModel';
 
 const YOU_CONNECTED = 'you-connected';
 
-class NetworkHandler {
+class NetworkHandler extends EventEmitter {
 
     /**
      * NetworkHandler constructor
      */
     constructor() {
-        this._onGameStateChangedCallbacks = [];
-        this._onConnectionCallbacks = [];
+        super();
 
+        this._socket = null;
         this._messages = null;
 
-        this._gameState = null;
         this._players = [];
         this._fruits = [];
+    }
+
+    get id() {
+        return this._socket.id;
     }
 
     _onConnected(payload) {
@@ -28,46 +32,63 @@ class NetworkHandler {
 
         this._messages = payload.settings.messages;
 
-        for (const callback of this._onConnectionCallbacks) {
-            callback(payload);
-        }
-
-        this._socket.on(this._messages.GAME_STARTED, this._onGameStarted.bind(this));
+        this._socket.on(this._messages.ROOM_STATE, this._onRoomStateReceived.bind(this));
+        this._socket.on(this._messages.GAME_ROUND_INITIATED, this._onGameRoundInitiated.bind(this));
+        this._socket.on(this._messages.GAME_ROUND_COUNTDOWN, this._onGameRoundCountdown.bind(this));
         this._socket.on(this._messages.GAME_STATE, this._onGameStateReceived.bind(this));
+
+        this.emit(NetworkHandler.events.CONNECTED, payload);
     }
 
-    _onGameStarted(payload) {
-        console.log('GAME STARTED!');
-    }
-
-    _onGameStateReceived(payload) {
-        const players = payload.players;
-        const fruits = payload.fruits;
-
-        this._gameState = null;
+    _createPlayers(players) {
         this._players = [];
-        this._fruits = [];
 
         for (const player of players) {
             this._players.push(new PlayerModel(player));
         }
+    }
+
+    _onRoomStateReceived(payload) {
+        console.log('ROOM_STATE!');
+
+        this._createPlayers(payload.players);
+
+        this.emit(NetworkHandler.events.ROOM_STATE, {
+            players: this._players,
+        });
+    }
+
+    _onGameRoundInitiated(payload) {
+        console.log('GAME_ROUND_INITIATED!');
+
+        this._createPlayers(payload.players);
+
+        this.emit(NetworkHandler.events.GAME_ROUND_INITIATED, {
+            players: this._players,
+        });
+    }
+
+    _onGameRoundCountdown(payload) {
+        this.emit(NetworkHandler.events.GAME_ROUND_COUNTDOWN, payload);
+    }
+
+    _onGameStateReceived(payload) {
+        console.log('GAME STATE!');
+
+        const fruits = payload.fruits;
+
+        this._createPlayers(payload.players);
+
+        this._fruits = [];
 
         for (const fruit of fruits) {
             this._fruits.push(new FruitModel(fruit));
         }
 
-        this._gameState = new GameStateModel({
+        this.emit(NetworkHandler.events.GAME_STATE, {
             players: this._players,
             fruits: this._fruits,
         });
-
-        this._fireOnGameStateChanged();
-    }
-
-    _fireOnGameStateChanged() {
-        for (const callback of this._onGameStateChangedCallbacks) {
-            callback(this._gameState);
-        }
     }
 
     connect() {
@@ -84,17 +105,17 @@ class NetworkHandler {
         this._socket.emit(this._messages.PLAYER_ACTION, input);
     }
 
-    addOnGameStateChangedListener(callback) {
-        this._onGameStateChangedCallbacks.push(callback);
-
-        if (this._gameState) {
-            callback(this._gameState);
-        }
-    }
-
-    addOnConnectionListener(callback) {
-        this._onConnectionCallbacks.push(callback);
+    emitClientLoaded() {
+        this._socket.emit(this._messages.CLIENT_LOADED);
     }
 }
+
+NetworkHandler.events = {
+    CONNECTED: 'on-connected',
+    ROOM_STATE: 'on-room-state',
+    GAME_ROUND_INITIATED: 'on-game-round-initiated',
+    GAME_ROUND_COUNTDOWN: 'on-game-round-countdown',
+    GAME_STATE: 'on-game-state',
+};
 
 export default NetworkHandler;

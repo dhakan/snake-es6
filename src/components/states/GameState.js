@@ -8,6 +8,34 @@ import NetworkHandler from 'src/components/objects/NetworkHandler';
 
 class GameState extends Phaser.State {
 
+    _createStageBorder(color) {
+        const canvas = document.querySelector('canvas');
+        canvas.style.border = `10px solid ${color}`;
+    }
+
+    _setCountdownValue(value) {
+        const countdown = document.querySelector('.countdown');
+        countdown.innerHTML = value;
+    }
+
+    _renderPlayers(players) {
+        for (const player of this._players) {
+            player.destroy();
+        }
+
+        this._players = [];
+
+        for (const playerModel of players) {
+            const player = new Player(playerModel, this.game);
+
+            this._players.push(player);
+
+            if (playerModel.id === this._networkHandler.id) {
+                this._createStageBorder(playerModel.color);
+            }
+        }
+    }
+
     init(networkHandler) {
         this._networkHandler = networkHandler;
     }
@@ -34,48 +62,38 @@ class GameState extends Phaser.State {
         this._players = [];
         this._fruits = [];
 
-        this._networkHandler.addOnGameStateChangedListener(gameState => {
-            for (const player of this._players) {
-                player.destroy();
-            }
+        this._networkHandler.emitClientLoaded();
 
-            this._players = [];
+        this._networkHandler.on(NetworkHandler.events.ROOM_STATE, payload => {
+            this._renderPlayers(payload.players);
+        });
 
+        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, payload => {
+            this._renderPlayers(payload.players);
+        });
+
+        this._networkHandler.on(NetworkHandler.events.GAME_ROUND_COUNTDOWN, countdownValue => {
+            this._setCountdownValue(countdownValue);
+        });
+
+        this._networkHandler.on(NetworkHandler.events.GAME_STATE, gameState => {
             for (const fruit of this._fruits) {
                 fruit.kill();
             }
 
             this._fruits = [];
 
-            for (const playerModel of gameState.players) {
-                const player = new Player(playerModel, this.game);
-
-                this._players.push(player);
-            }
-
             for (const fruitModel of gameState.fruits) {
                 this._spawnFruit(fruitModel);
             }
+
+            this._renderPlayers(gameState.players);
         });
 
         this._cursorKeys = this.game.input.keyboard.createCursorKeys();
 
         this._currentDirection = null;
         this._oldDirection = null;
-
-        // this._networkHandler.on("playersReceived", (payload) =>{
-        //     console.log(paload);
-        // });
-
-        // this._networkHandler.connect();
-
-        // this._player = new Player(this.game);
-
-        // for (let i = 0; i <= 1; i++) {
-        //     this._spawnFruit();
-        // }
-
-        // this._debugger = new Debugger(this.game, this._player.children[0]);
     }
 
     /**
@@ -123,9 +141,9 @@ class GameState extends Phaser.State {
      * Renders the game
      */
     render() {
+        // this.game.debug.geom(this._stageBorder);
         // this._debugger.render();
     }
-
 }
 
 export default GameState;

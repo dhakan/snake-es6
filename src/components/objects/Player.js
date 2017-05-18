@@ -13,8 +13,8 @@ class Player extends Phaser.Group {
 
         for (const bodyPart of playerModel.bodyParts) {
             this.expandBody({
-                x: bodyPart._x,
-                y: bodyPart._y,
+                x: bodyPart.x,
+                y: bodyPart.y,
             }, playerModel.color);
         }
     }
