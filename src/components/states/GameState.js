@@ -36,6 +36,14 @@ class GameState extends Phaser.State {
         }
     }
 
+    _killFruits() {
+        for (const fruit of this._fruits) {
+            fruit.kill();
+        }
+
+        this._fruits = [];
+    }
+
     init(networkHandler) {
         this._networkHandler = networkHandler;
     }
@@ -69,6 +77,7 @@ class GameState extends Phaser.State {
         });
 
         this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, payload => {
+            this._killFruits();
             this._renderPlayers(payload.players);
         });
 
@@ -77,11 +86,7 @@ class GameState extends Phaser.State {
         });
 
         this._networkHandler.on(NetworkHandler.events.GAME_STATE, gameState => {
-            for (const fruit of this._fruits) {
-                fruit.kill();
-            }
-
-            this._fruits = [];
+            this._killFruits();
 
             for (const fruitModel of gameState.fruits) {
                 this._spawnFruit(fruitModel);
