@@ -48,6 +48,9 @@ class GameState extends Phaser.State {
         this._networkHandler = networkHandler;
         this._currentDirection = null;
         this._oldDirection = null;
+        this._players = [];
+        this._fruits = [];
+        this._cursorKeys = this.game.input.keyboard.createCursorKeys();
     }
 
     /**
@@ -68,9 +71,6 @@ class GameState extends Phaser.State {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.stage.setBackgroundColor(this.game.settings.BACKGROUND_COLOR);
         this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
-
-        this._players = [];
-        this._fruits = [];
 
         this._networkHandler.emitClientLoaded();
 
@@ -100,8 +100,6 @@ class GameState extends Phaser.State {
 
             this._renderPlayers(gameState.players);
         });
-
-        this._cursorKeys = this.game.input.keyboard.createCursorKeys();
     }
 
     /**
