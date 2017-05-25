@@ -46,6 +46,8 @@ class GameState extends Phaser.State {
 
     init(networkHandler) {
         this._networkHandler = networkHandler;
+        this._currentDirection = null;
+        this._oldDirection = null;
     }
 
     /**
@@ -78,6 +80,9 @@ class GameState extends Phaser.State {
         });
 
         this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, payload => {
+            this._currentDirection = null;
+            this._oldDirection = null;
+
             this._killFruits();
             this._renderPlayers(payload.players);
         });
@@ -97,9 +102,6 @@ class GameState extends Phaser.State {
         });
 
         this._cursorKeys = this.game.input.keyboard.createCursorKeys();
-
-        this._currentDirection = null;
-        this._oldDirection = null;
     }
 
     /**
