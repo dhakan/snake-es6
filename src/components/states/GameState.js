@@ -151,7 +151,10 @@ class GameState extends Phaser.State {
                 break;
         }
 
-        this._networkHandler.sendPlayerAction(this._currentDirection);
+        if (this._currentDirection) {
+            this._networkHandler.sendPlayerAction(this._currentDirection);
+            this._currentDirection = null;
+        }
     }
 
     _addKeyListeners() {
