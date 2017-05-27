@@ -47,10 +47,9 @@ class GameState extends Phaser.State {
     init(networkHandler) {
         this._networkHandler = networkHandler;
         this._currentDirection = null;
-        this._oldDirection = null;
         this._players = [];
         this._fruits = [];
-        this._cursorKeys = this.game.input.keyboard.createCursorKeys();
+        this._keys = {};
     }
 
     /**
@@ -100,6 +99,8 @@ class GameState extends Phaser.State {
 
             this._renderPlayers(gameState.players);
         });
+
+        this._addKeyListeners();
     }
 
     /**
@@ -122,24 +123,6 @@ class GameState extends Phaser.State {
      * Updates the game
      */
     update() {
-        if (this._cursorKeys.left.isDown) {
-            this._currentDirection = this.game.settings.playerActions.LEFT;
-        } else if (this._cursorKeys.right.isDown) {
-            this._currentDirection = this.game.settings.playerActions.RIGHT;
-        } else if (this._cursorKeys.up.isDown) {
-            this._currentDirection = this.game.settings.playerActions.UP;
-        } else if (this._cursorKeys.down.isDown) {
-            this._currentDirection = this.game.settings.playerActions.DOWN;
-        }
-
-        if (this._currentDirection !== this._oldDirection) {
-            this._networkHandler.sendPlayerAction(this._currentDirection);
-        }
-
-        this._oldDirection = this._currentDirection;
-
-        //this._player.move();
-        // this._detectCollisions();
     }
 
     /**
@@ -147,8 +130,48 @@ class GameState extends Phaser.State {
      * Renders the game
      */
     render() {
-        // this.game.debug.geom(this._stageBorder);
-        // this._debugger.render();
+    }
+
+    _onPlayerAction(event) {
+        switch (event.keyCode) {
+            case this._keys.KEY_UP.keyCode:
+                this._currentDirection = this.game.settings.playerActions.UP;
+                break;
+            case this._keys.KEY_DOWN.keyCode:
+                this._currentDirection = this.game.settings.playerActions.DOWN;
+                break;
+            case this._keys.KEY_LEFT.keyCode:
+                this._currentDirection = this.game.settings.playerActions.LEFT;
+                break;
+            case this._keys.KEY_RIGHT.keyCode:
+                this._currentDirection = this.game.settings.playerActions.RIGHT;
+                break;
+            case this._keys.KEY_SPACEBAR.keyCode:
+                this._networkHandler.sendPlayerAction(this.game.settings.playerActions.INVERSE);
+                break;
+        }
+
+        this._networkHandler.sendPlayerAction(this._currentDirection);
+    }
+
+    _addKeyListeners() {
+        this._keys = {
+            KEY_SPACEBAR: this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
+            KEY_UP: this.game.input.keyboard.addKey(Phaser.Keyboard.UP),
+            KEY_DOWN: this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN),
+            KEY_LEFT: this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT),
+            KEY_RIGHT: this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT),
+        };
+
+        const keys = [
+            this._keys.KEY_SPACEBAR,
+            this._keys.KEY_UP,
+            this._keys.KEY_DOWN,
+            this._keys.KEY_LEFT,
+            this._keys.KEY_RIGHT
+        ];
+
+        keys.forEach(key => key.onDown.add(this._onPlayerAction.bind(this)));
     }
 }
 
