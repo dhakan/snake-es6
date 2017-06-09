@@ -73,6 +73,10 @@ class GameState extends Phaser.State {
 
         this._networkHandler.emitClientLoaded();
 
+        this._networkHandler.on(NetworkHandler.events.CONNECTED, () => {
+            this._networkHandler.emitClientLoaded();
+        });
+
         this._networkHandler.on(NetworkHandler.events.ROOM_STATE, payload => {
             this._killFruits();
             this._renderPlayers(payload.players);
