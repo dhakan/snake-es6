@@ -31,6 +31,7 @@ class GameState extends Phaser.State {
             this._players.push(player);
 
             if (playerModel.id === this._networkHandler.id) {
+                this._player = player;
                 this._createStageBorder(playerModel.color);
             }
         }
@@ -48,8 +49,10 @@ class GameState extends Phaser.State {
         this._networkHandler = networkHandler;
         this._currentDirection = null;
         this._players = [];
+        this._player = null;
         this._fruits = [];
         this._keys = {};
+        this._gameRoundRunning = false;
     }
 
     /**
@@ -83,6 +86,8 @@ class GameState extends Phaser.State {
         });
 
         this._networkHandler.on(NetworkHandler.events.GAME_ROUND_INITIATED, payload => {
+            this._gameRoundRunning = true;
+
             this._currentDirection = null;
             this._oldDirection = null;
 
@@ -94,7 +99,7 @@ class GameState extends Phaser.State {
             this._setCountdownValue(countdownValue);
         });
 
-        this._networkHandler.on(NetworkHandler.events.GAME_STATE, gameState => {
+        this._networkHandler.once(NetworkHandler.events.GAME_STATE, gameState => {
             this._killFruits();
 
             for (const fruitModel of gameState.fruits) {
@@ -127,6 +132,11 @@ class GameState extends Phaser.State {
      * Updates the game
      */
     update() {
+        if (!this._gameRoundRunning) {
+            return;
+        }
+
+        this._player.move();
     }
 
     /**
@@ -156,6 +166,7 @@ class GameState extends Phaser.State {
         }
 
         if (this._currentDirection) {
+            this._player.direction = this._currentDirection;
             this._networkHandler.sendPlayerAction(this._currentDirection);
             this._currentDirection = null;
         }

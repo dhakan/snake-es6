@@ -9,6 +9,7 @@ class PlayerModel {
         this._id = data.id;
         this._color = data.color;
         this._bodyParts = [];
+        this._direction = data.direction;
 
         for (const bodyPartData of data.bodyParts) {
             this._bodyParts.push(new BodyPartModel(bodyPartData));
@@ -25,6 +26,10 @@ class PlayerModel {
 
     get bodyParts() {
         return this._bodyParts;
+    }
+
+    get direction() {
+        return this._direction;
     }
 }
 

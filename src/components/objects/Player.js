@@ -17,6 +17,21 @@ class Player extends Phaser.Group {
                 y: bodyPart.y,
             }, playerModel.color);
         }
+
+        this._direction = playerModel.direction;
+        // this._direction = null;
+    }
+
+    get direction() {
+        return this._direction;
+    }
+
+    set direction(newValue) {
+        this._direction = newValue;
+    }
+
+    get head() {
+        return this.children[0];
     }
 
     _onBodyPartCollision() {
@@ -37,43 +52,35 @@ class Player extends Phaser.Group {
     }
 
     /**
-     * Sets the direction of the player
-     * @param newDirection the new direction
-     */
-    setDirection(newDirection) {
-        this._direction = newDirection;
-    }
-
-    /**
      * Moves the player
      */
     move() {
-        // if (this.game.time.now < this._moveTimer) {
-        //     return;
-        // }
-        //
-        // const tail = this.children.pop(),
-        //     head = this.children[0];
-        //
-        // let newHeadX = head.position.x,
-        //     newHeadY = head.position.y;
-        //
-        // if (this._direction === constants.directions.LEFT) {
-        //     newHeadX += -constants.GRID_SIZE;
-        // } else if (this._direction === constants.directions.RIGHT) {
-        //     newHeadX += constants.GRID_SIZE;
-        // } else if (this._direction === constants.directions.UP) {
-        //     newHeadY += -constants.GRID_SIZE;
-        // } else {
-        //     newHeadY += constants.GRID_SIZE;
-        // }
-        //
-        // this.children.unshift(tail);
-        //
-        // tail.xPos = newHeadX;
-        // tail.yPos = newHeadY;
-        //
-        // this._moveTimer = this.game.time.now + constants.PLAYER_MOVE_TIMER;
+        if (this.game.time.now < this._moveTimer) {
+            return;
+        }
+
+        const tail = this.children.pop(),
+            head = this.head;
+
+        let newHeadX = head.x,
+            newHeadY = head.y;
+
+        if (this._direction === this.game.settings.playerActions.LEFT) {
+            newHeadX += -this.game.settings.GRID_SIZE;
+        } else if (this._direction === this.game.settings.playerActions.RIGHT) {
+            newHeadX += this.game.settings.GRID_SIZE;
+        } else if (this._direction === this.game.settings.playerActions.UP) {
+            newHeadY += -this.game.settings.GRID_SIZE;
+        } else {
+            newHeadY += this.game.settings.GRID_SIZE;
+        }
+
+        this.children.unshift(tail);
+
+        tail.xPos = newHeadX;
+        tail.yPos = newHeadY;
+
+        this._moveTimer = this.game.time.now + this.game.settings.GAME_LOOP_TIMER;
     }
 }
 
