@@ -21,6 +21,8 @@ class NetworkHandler extends EventEmitter {
 
         this._players = [];
         this._fruits = [];
+
+        this._playerActionCounter = 0;
     }
 
     get id() {
@@ -61,6 +63,8 @@ class NetworkHandler extends EventEmitter {
     _onGameRoundInitiated(payload) {
         console.log('GAME_ROUND_INITIATED!');
 
+        this._playerActionCounter = 0;
+
         this._createPlayers(payload.players);
 
         this.emit(NetworkHandler.events.GAME_ROUND_INITIATED, {
@@ -69,6 +73,7 @@ class NetworkHandler extends EventEmitter {
     }
 
     _onGameRoundCountdown(payload) {
+        console.log('GAME_ROUND_COUNTDOWN');
         this.emit(NetworkHandler.events.GAME_ROUND_COUNTDOWN, payload);
     }
 
@@ -101,8 +106,12 @@ class NetworkHandler extends EventEmitter {
         this._socket.on(YOU_CONNECTED, this._onConnected.bind(this));
     }
 
-    sendPlayerAction(input) {
-        this._socket.emit(this._messages.PLAYER_ACTION, input);
+    sendPlayerAction(action) {
+        this._socket.emit(this._messages.PLAYER_ACTION, {
+            action: action,
+            sequenceNumber: this._playerActionCounter,
+        });
+        this._playerActionCounter++;
     }
 
     emitClientLoaded() {

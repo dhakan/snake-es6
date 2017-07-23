@@ -99,7 +99,7 @@ class GameState extends Phaser.State {
             this._setCountdownValue(countdownValue);
         });
 
-        this._networkHandler.once(NetworkHandler.events.GAME_STATE, gameState => {
+        this._networkHandler.on(NetworkHandler.events.GAME_STATE, gameState => {
             this._killFruits();
 
             for (const fruitModel of gameState.fruits) {
